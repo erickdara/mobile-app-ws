@@ -4,9 +4,15 @@ import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
@@ -27,9 +33,9 @@ public class UserController {
 		returnValue.setEmail("erick1rg@gmail.com");
 		returnValue.setFirstName("Erick");
 		returnValue.setLastName("Rangel");
-		
+
 		return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
-	}				
+	}
 	
 	@PostMapping(consumes = {
 			MediaType.APPLICATION_XML_VALUE,
@@ -39,7 +45,7 @@ public class UserController {
 			MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE
 	} )
-	public ResponseEntity<UserRest> createUser(@RequestBody UserDetailsRequestModel userDetails) {
+	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
 		UserRest returnValue = new UserRest();
 		returnValue.setEmail(userDetails.getEmail());
 		returnValue.setFirstName(userDetails.getFirstName());
@@ -56,6 +62,18 @@ public class UserController {
 	@DeleteMapping
 	public String deleteUser() {
 		return "delete user was called";
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return errors;
 	}
 	
 
