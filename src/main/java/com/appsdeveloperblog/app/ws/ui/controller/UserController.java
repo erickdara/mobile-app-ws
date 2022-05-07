@@ -1,5 +1,6 @@
 package com.appsdeveloperblog.app.ws.ui.controller;
 
+import com.appsdeveloperblog.app.ws.ui.model.request.UpdateUserRequestModel;
 import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -63,9 +64,19 @@ public class UserController {
 		return new ResponseEntity<>(returnValue, HttpStatus.OK);
 	}
 	
-	@PutMapping
-	public String updateUser() {
-		return "update user was called";
+	@PutMapping(path = "/{userId}", consumes = {
+			MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE
+	}, produces = {
+			MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE
+	})
+	public UserRest updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserRequestModel userDetails) {
+		UserRest storeUserDetails = users.get(userId);
+		storeUserDetails.setFirstName(userDetails.getFirstName());
+		storeUserDetails.setLastName(userDetails.getLastName());
+
+		return storeUserDetails;
 	}
 	
 	@DeleteMapping
