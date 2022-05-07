@@ -79,9 +79,10 @@ public class UserController {
 		return storeUserDetails;
 	}
 	
-	@DeleteMapping
-	public String deleteUser() {
-		return "delete user was called";
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+		users.remove(id);
+		return ResponseEntity.noContent().build();
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
