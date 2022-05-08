@@ -1,5 +1,6 @@
 package com.appsdeveloperblog.app.ws.ui.controller;
 
+import com.appsdeveloperblog.app.ws.exceptions.UserServiceException;
 import com.appsdeveloperblog.app.ws.ui.model.request.UpdateUserRequestModel;
 import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,8 @@ public class UserController {
 			MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity <UserRest> getUser(@PathVariable String userId) {
+
+		if(true) throw new UserServiceException("A user service exception is thrown");
 
 		if(users.containsKey(userId)){
 			return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
